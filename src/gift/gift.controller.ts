@@ -18,9 +18,15 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { JwtAuthGuard } from 'src/auth';
+import { JwtAuthGuard } from '../auth';
 import { Gift } from 'src/models';
-import { AllGiftsDto, PatchGiftDto, PostGiftDto, RatingDto } from './dto';
+import {
+  AllGiftsDto,
+  PatchGiftDto,
+  PostGiftDto,
+  RatingDto,
+  RedeemGiftDto,
+} from './dto';
 import { GiftService } from './gift.service';
 
 @Controller('Gifts')
@@ -143,5 +149,20 @@ export class GiftController {
     @Req() req: Request,
   ) {
     return this.giftService.giftsRating(dto, id, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/redeem')
+  @HttpCode(200)
+  redeemGift(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+    @Req() req: Request,
+    @Body(new ValidationPipe()) dto: RedeemGiftDto,
+  ) {
+    return this.giftService.redeemGift(id, req.user, dto);
   }
 }

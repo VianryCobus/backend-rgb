@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
@@ -14,6 +15,11 @@ import { User } from './user.entity';
 export class Redeem {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    type: 'int',
+  })
+  qty: number;
 
   @ManyToOne(() => Gift, (gift) => gift.redeems)
   @JoinColumn()

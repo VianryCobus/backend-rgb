@@ -1,13 +1,18 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import {
   IPaginationOptions,
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { Gift, Rating, User } from 'src/models';
+import { Gift, Rating, Redeem, User } from '../models';
 import { DataSource, Repository } from 'typeorm';
-import { PatchGiftDto, PostGiftDto, RatingDto } from './dto';
+import { PatchGiftDto, PostGiftDto, RatingDto, RedeemGiftDto } from './dto';
 
 @Injectable()
 export class GiftService {
@@ -16,6 +21,7 @@ export class GiftService {
     @InjectRepository(Gift) private giftsRepository: Repository<Gift>,
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Rating) private ratingsRepository: Repository<Rating>,
+    @InjectRepository(Redeem) private redeemsRepository: Repository<Redeem>,
   ) {}
 
   // async allgifts(options: IPaginationOptions, sort): Promise<Pagination<Gift>> {
@@ -342,6 +348,100 @@ export class GiftService {
         };
       }
       return returnData;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async redeemGift(id, user, dto: RedeemGiftDto) {
+    try {
+      // get data gift that suitable with id
+      const gift = await this.dataSource
+        .createQueryBuilder(Gift, 'gift')
+        .where('gift.id = :id', { id })
+        .getOne();
+      // return gift;
+      // check stock
+      if (gift.stock < 1) throw new ForbiddenException('Gift out of stock');
+
+      if (gift.stock < dto.qty)
+        throw new ForbiddenException('Gift not enough stock');
+
+      const totalPrice = Number(gift.price) * Number(dto.qty);
+      // get user
+      const userData = await this.dataSource
+        .createQueryBuilder(User, 'user')
+        .where('user.id = :id', { id: user.id })
+        .getOne();
+      // check user exist
+      if (!userData) throw new ForbiddenException(`User doesn't exist`);
+      // check user poin with price gift
+      if (userData.point < totalPrice)
+        throw new ForbiddenException(`Insufficient Point`);
+      // if all condition is fullfilled
+      let processCutGiftStock: boolean = false;
+      let processCutPointUser: boolean = false;
+      const cutGiftStock = await this.dataSource
+        .createQueryBuilder()
+        .update(Gift)
+        .set({
+          stock: Number(gift.stock) - Number(dto.qty),
+        })
+        .where('id = :id', { id: gift.id })
+        .execute();
+      if (cutGiftStock) processCutGiftStock = true;
+      // check process cut stock
+      if (!processCutGiftStock)
+        throw new HttpException(
+          'Failed process cut stock',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+
+      const cutPointUser = await this.dataSource
+        .createQueryBuilder()
+        .update(User)
+        .set({
+          point: Number(userData.point) - Number(totalPrice),
+        })
+        .where('id = :id', { id: userData.id })
+        .execute();
+      if (cutPointUser) processCutPointUser = true;
+      // check process cut point
+      if (!processCutPointUser)
+        throw new HttpException(
+          'Failed process cut point User',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      // insert data to table redeem
+      // const insertDataRedeem = await this.dataSource
+      //   .createQueryBuilder()
+      //   .insert()
+      //   .into(Redeem)
+      //   .values({
+      //     giftId: id,
+      //     userId: user.id,
+      //     qty: dto.qty,
+      //   })
+      //   .execute();
+      // create new rating object
+      const newRedeem = await this.redeemsRepository.create({
+        qty: dto.qty,
+        gift: gift,
+        user: userData,
+      });
+      // save new rating
+      const insertDataRedeem = await this.redeemsRepository.save(newRedeem);
+      if (insertDataRedeem) {
+        return {
+          status: true,
+          message: `Redeem process successfully`,
+        };
+      } else {
+        throw new HttpException(
+          'Failed process save redeem data',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     } catch (error) {
       throw error;
     }
