@@ -5,6 +5,7 @@ import { typeOrmAsyncConfig } from 'src/config/typeorm-config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth';
+import databaseConfig from './config/ormconfig_mysql';
 import { GiftModule } from './gift';
 
 @Module({
@@ -12,7 +13,7 @@ import { GiftModule } from './gift';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
+    TypeOrmModule.forRootAsync(databaseConfig),
     AuthModule,
     GiftModule,
   ],

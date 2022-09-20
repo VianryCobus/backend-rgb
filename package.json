@@ -25,6 +25,7 @@
     "migration:create": "yarn run typeorm:cli migration:create",
     "migration:run": "yarn run typeorm:cli migration:run",
     "migration:revert": "yarn run typeorm:cli migration:revert",
+    "migration:generate:run:seed": "yarn run typeorm:cli migration:generate src/models/migrations/initialMigrate && yarn migration:run && yarn seed:config && yarn seed:run",
     "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config -n src/config/ormconfig_mysql.ts",
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed -n src/config/ormconfig_mysql.ts"
   },

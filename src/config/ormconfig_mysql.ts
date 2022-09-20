@@ -23,11 +23,10 @@ const databaseConfig: DataSourceOptions = {
   username: process.env.MYSQL_USERNAME,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
-  entities: ['dist/src/models/**/*.entity.js'],
+  entities: ['src/models/**/*.entity.ts'],
   migrations: ['src/models/migrations/*{.ts,.js}'],
   // migrationsTableName: 'migrations',
   logging: true,
-  migrationsRun: true,
 };
 
 export default databaseConfig;

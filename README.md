@@ -30,6 +30,29 @@
 
 ```bash
 $ npm install
+# yarn syntax
+$ yarn install
+```
+
+## Make .env file from .env.example
+
+```bash
+# in the root of application folder
+$ cp .env,example .env
+# fill the variable appropriate with your database credentials and your local server
+```
+
+## Running migration and seeder
+
+```bash
+$ npm run migration:generate:run:seed
+# yarn syntax
+$ yarn migration:generate:run:seed
+
+# REVERT migration
+$ npm run migration:revert
+# yarn syntax
+$ yarn migration:revert
 ```
 
 ## Running the app
@@ -37,12 +60,18 @@ $ npm install
 ```bash
 # development
 $ npm run start
+# yarn syntax
+yarn start
 
-# watch mode
+# watch mode (recommended)
 $ npm run start:dev
+# yarn syntax
+$ yarn start:dev
 
 # production mode
 $ npm run start:prod
+# yarn syntax
+$ yarn start:prod
 ```
 
 ## Test
@@ -50,12 +79,18 @@ $ npm run start:prod
 ```bash
 # unit tests
 $ npm run test
+# yarn syntax
+$ yarn test
 
 # e2e tests
 $ npm run test:e2e
+# yarn syntax
+$ yarn test:e2e
 
 # test coverage
 $ npm run test:cov
+# yarn syntax
+$ yarn test:cov
 ```
 
 ## Support
