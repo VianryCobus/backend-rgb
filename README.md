@@ -38,7 +38,7 @@ $ yarn install
 
 ```bash
 # in the root of application folder
-$ cp .env,example .env
+$ cp .env.example .env
 # fill the variable appropriate with your database credentials and your local server
 ```
 
