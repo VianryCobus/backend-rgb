@@ -1,16 +1,58 @@
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { request } from 'express';
+import databaseConfig from '../config/ormconfig_mysql';
 import { typeOrmAsyncConfig } from '../config/typeorm-config';
 import { Gift, Rating, Redeem, User } from '../models';
 import { GiftController } from './gift.controller';
 import { GiftService } from './gift.service';
 
-describe('GiftController', () => {
+describe('Gift Controller', () => {
   let giftController: GiftController;
-  const mockGiftService = {
-    allGiftsNew: jest.fn((dto) => {
-      return {
+  let giftService: GiftService;
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        TypeOrmModule.forRoot(databaseConfig),
+        TypeOrmModule.forFeature([User, Gift, Redeem, Rating]),
+      ],
+      controllers: [GiftController],
+      providers: [GiftService],
+    }).compile();
+
+    giftService = moduleRef.get<GiftService>(GiftService);
+    giftController = moduleRef.get<GiftController>(GiftController);
+  });
+
+  it('should be defined', () => {
+    expect(giftController).toBeDefined();
+  });
+
+  describe('allGiftsNew', () => {
+    it('should return an array of gift with rating in pagination', async () => {
+      const result: {
+        totalCount: number;
+        page: any;
+        limit: any;
+        data: any[];
+      } = {
+        totalCount: expect.any(Number),
+        page: expect.any(Number),
+        limit: expect.any(Number),
+        data: expect.any(Array),
+      };
+      jest
+        .spyOn(giftService, 'allGiftsNew')
+        .mockImplementation(async () => result);
+
+      const dto = {
+        page: 1,
+        limit: 10,
+        sort: 'ASC',
+      };
+
+      expect(await giftController.allGiftsNew(dto)).toStrictEqual({
         totalCount: 10,
         page: 1,
         limit: 10,
@@ -31,10 +73,24 @@ describe('GiftController', () => {
             bintang: 4,
           },
         ],
+      });
+    });
+  });
+
+  describe('oneGifts', () => {
+    it('should return one object of gift', async () => {
+      const result: {
+        status: boolean;
+        data: any[];
+      } = {
+        status: expect.any(Boolean),
+        data: expect.any(Array),
       };
-    }),
-    oneGift: jest.fn((dto) => {
-      return {
+      jest.spyOn(giftService, 'oneGift').mockImplementation(async () => result);
+
+      const dto: number = 1;
+
+      expect(await giftController.oneGifts(dto)).toStrictEqual({
         status: true,
         data: [
           {
@@ -53,88 +109,23 @@ describe('GiftController', () => {
             bintang: null,
           },
         ],
-      };
-    }),
-    postGift: jest.fn((dto) => {
-      return {
-        status: true,
-        message: 'New Gift is saved successfully',
-      };
-    }),
-    putGift: jest.fn((id, dto) => {
-      return {
-        status: true,
-        message: 'Gift is updated successfully',
-      };
-    }),
-    patchGift: jest.fn((id, dto) => {
-      return {
-        status: true,
-        message: 'Gift is patched successfully',
-      };
-    }),
-    deleteGift: jest.fn((id) => {
-      return {
-        status: true,
-        message: 'Gift is deleted successfully',
-      };
-    }),
-    redeemGift: jest.fn((id, request, dto) => {
-      return {
-        status: true,
-        message: 'Redeem process successfully',
-      };
-    }),
-  };
-
-  beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      controllers: [GiftController],
-      providers: [GiftService],
-    })
-      .overrideProvider(GiftService)
-      .useValue(mockGiftService)
-      .compile();
-    giftController = moduleRef.get<GiftController>(GiftController);
-  });
-
-  describe('allGiftsNew', () => {
-    it('should be define', () => {
-      expect(giftController).toBeDefined();
-    });
-
-    it('should return object of gift with pagination', () => {
-      const dto = {
-        sort: 'ASC',
-        page: 1,
-        limit: 10,
-      };
-
-      expect(giftController.allGiftsNew(dto)).toEqual({
-        totalCount: expect.any(Number),
-        page: expect.any(Number),
-        limit: expect.any(Number),
-        data: expect.any(Array),
       });
-
-      expect(mockGiftService.allGiftsNew).toHaveBeenCalledWith(dto);
-    });
-  });
-
-  describe('OneGifts', () => {
-    it('should return one object of gift', () => {
-      const dto: number = 1;
-      expect(giftController.oneGifts(dto)).toEqual({
-        status: expect.any(Boolean),
-        data: expect.any(Array),
-      });
-
-      expect(mockGiftService.oneGift).toHaveBeenCalledWith(dto);
     });
   });
 
   describe('postGift', () => {
-    it('should add One gift and return boolean status and message', () => {
+    it('should add One gift and return boolean status and message', async () => {
+      const result: {
+        status: boolean;
+        message: string;
+      } = {
+        status: expect.any(Boolean),
+        message: expect.any(String),
+      };
+      jest
+        .spyOn(giftService, 'postGift')
+        .mockImplementation(async () => result);
+
       const dto = {
         name: 'Nokia 3510',
         description:
@@ -145,38 +136,54 @@ describe('GiftController', () => {
           'https://picsum.photos/200/300?random=1https://picsum.photos/200/300?random=1',
       };
 
-      expect(giftController.postGift(dto)).toEqual({
-        status: expect.any(Boolean),
-        message: expect.any(String),
+      expect(await giftController.postGift(dto)).toStrictEqual({
+        status: true,
+        message: 'New Gift is saved successfully',
       });
-
-      expect(mockGiftService.postGift).toHaveBeenCalledWith(dto);
     });
   });
 
   describe('putGift', () => {
-    it('should update one gift and return boolean status and message', () => {
+    it('should update one gift and return boolean status and message', async () => {
+      const result: {
+        status: boolean;
+        message: string;
+      } = {
+        status: expect.any(Boolean),
+        message: expect.any(String),
+      };
+      jest.spyOn(giftService, 'putGift').mockImplementation(async () => result);
+
       const dto = {
-        name: 'Nokia 35110',
+        name: 'Nokia 3510',
         description:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         price: 2500000,
-        stock: 15,
+        stock: 5,
         image:
           'https://picsum.photos/200/300?random=1https://picsum.photos/200/300?random=1',
       };
 
-      expect(giftController.putGift(1, dto)).toEqual({
-        status: expect.any(Boolean),
-        message: expect.any(String),
+      expect(await giftController.putGift(1, dto)).toStrictEqual({
+        status: true,
+        message: 'Gift is updated successfully',
       });
-
-      expect(mockGiftService.putGift).toHaveBeenCalledWith(1, dto);
     });
   });
 
   describe('patchGift', () => {
-    it('should patch one gift and return boolean status and message', () => {
+    it('should patch one gift and return boolean status and message', async () => {
+      const result: {
+        status: boolean;
+        message: string;
+      } = {
+        status: expect.any(Boolean),
+        message: expect.any(String),
+      };
+      jest
+        .spyOn(giftService, 'patchGift')
+        .mockImplementation(async () => result);
+
       const dto = {
         name: 'tes',
         description: 'tes',
@@ -185,30 +192,48 @@ describe('GiftController', () => {
         image: 'tes',
       };
 
-      expect(giftController.patchGift(1, dto)).toEqual({
-        status: expect.any(Boolean),
-        message: expect.any(String),
+      expect(await giftController.patchGift(1, dto)).toStrictEqual({
+        status: true,
+        message: 'Gift is patched successfully',
       });
-
-      expect(mockGiftService.patchGift).toHaveBeenCalledWith(1, dto);
     });
   });
 
   describe('deleteGift', () => {
-    it('should delete one gift and return boolean status and message', () => {
-      const dto = 1;
-
-      expect(giftController.deleteGift(dto)).toEqual({
+    it('should delete one gift and return boolean status and message', async () => {
+      const result: {
+        status: boolean;
+        message: string;
+      } = {
         status: expect.any(Boolean),
         message: expect.any(String),
-      });
+      };
+      jest
+        .spyOn(giftService, 'deleteGift')
+        .mockImplementation(async () => result);
 
-      expect(mockGiftService.deleteGift).toHaveBeenCalledWith(dto);
+      const dto = 1;
+
+      expect(await giftController.deleteGift(dto)).toStrictEqual({
+        status: true,
+        message: 'Gift is deleted successfully',
+      });
     });
   });
 
   describe('redeemGift', () => {
-    it('should redeem gift and return boolean status and message', () => {
+    it('should redeem gift and return boolean status and message', async () => {
+      const result: {
+        status: boolean;
+        message: string;
+      } = {
+        status: expect.any(Boolean),
+        message: expect.any(String),
+      };
+      jest
+        .spyOn(giftService, 'redeemGift')
+        .mockImplementation(async () => result);
+
       const id = 1;
       const user = {
         email: 'vx.pangemanan@gmail.com',
@@ -218,12 +243,10 @@ describe('GiftController', () => {
         qty: 2,
       };
 
-      expect(giftController.redeemGift(id, request, dto)).toEqual({
-        status: expect.any(Boolean),
-        message: expect.any(String),
+      expect(await giftController.redeemGift(id, request, dto)).toStrictEqual({
+        status: true,
+        message: 'Redeem process successfully',
       });
-
-      expect(mockGiftService.redeemGift).toHaveBeenCalled();
     });
   });
 });

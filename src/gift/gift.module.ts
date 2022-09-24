@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Gift, Rating, Redeem, User } from 'src/models';
+import { Gift, Rating, Redeem, User } from '../models';
 import { GiftController } from './gift.controller';
 import { GiftService } from './gift.service';
 

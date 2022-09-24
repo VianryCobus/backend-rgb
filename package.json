@@ -16,6 +16,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:migrate:seed": "yarn run migration:revert && yarn run migration:run && yarn run seed:config && yarn seed:run && yarn test",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
@@ -26,6 +27,7 @@
     "migration:run": "yarn run typeorm:cli migration:run",
     "migration:revert": "yarn run typeorm:cli migration:revert",
     "migration:generate:run:seed": "yarn run typeorm:cli migration:generate src/models/migrations/initialMigrate && yarn migration:run && yarn seed:config && yarn seed:run",
+    "migration:reset": "yarn migration:revert && yarn migration:run && yarn seed:config && yarn seed:run",
     "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config -n src/config/ormconfig_mysql.ts",
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed -n src/config/ormconfig_mysql.ts"
   },
