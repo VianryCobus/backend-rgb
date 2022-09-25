@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import databaseConfig from '../src/config/ormconfig_mysql';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppController } from '../src/app.controller';
+import { AppService } from '../src/app.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -9,6 +13,8 @@ describe('AppController (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
+      // controllers: [AppController],
+      // providers: [AppService],
     }).compile();
 
     app = moduleFixture.createNestApplication();

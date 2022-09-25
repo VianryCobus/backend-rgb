@@ -13,7 +13,7 @@ import { GiftModule } from './gift';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRootAsync(databaseConfig),
+    TypeOrmModule.forRoot(databaseConfig),
     AuthModule,
     GiftModule,
   ],
