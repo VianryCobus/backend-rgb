@@ -64,4 +64,19 @@ describe('AuthController (e2e)', () => {
       })
       .catch((err) => done(err));
   });
+
+  it('/auth/getuser', (done) => {
+    request(app.getHttpServer())
+      .get('/auth/getuser')
+      .set('Authorization', `Bearer ${bearer}`)
+      .then((response) => {
+        expect(response.status).toEqual(200);
+        expect(response.body).toEqual({
+          status: expect.any(Boolean),
+          data: expect.any(Object),
+        });
+        done();
+      })
+      .catch((err) => done(err));
+  });
 });

@@ -8,68 +8,72 @@ import { PatchGiftDto } from './dto/patchGift.dto';
 describe('GiftService', () => {
   let service: GiftService;
 
-  const mockGiftRepository = {
-    findOne: jest.fn().mockImplementation((gift) =>
-      Promise.resolve({
-        id: Date.now(),
-        ...gift,
-      }),
-    ),
-    create: jest.fn().mockImplementation((dto) => dto),
-    save: jest.fn().mockImplementation((gift) =>
-      Promise.resolve({
-        id: Date.now(),
-        ...gift,
-      }),
-    ),
-  };
-  const mockUserRepository = {
-    findOne: jest.fn().mockImplementation((user) =>
-      Promise.resolve({
-        id: Date.now(),
-        ...user,
-      }),
-    ),
-  };
-  const mockRatingRepository = {
-    create: jest.fn().mockImplementation((dto) => dto),
-    save: jest.fn().mockImplementation((rating) =>
-      Promise.resolve({
-        id: Date.now(),
-        ...rating,
-      }),
-    ),
-  };
-  const mockRedeemRepository = {
-    create: jest.fn().mockImplementation((dto) => dto),
-    save: jest.fn().mockImplementation((redeem) =>
-      Promise.resolve({
-        id: Date.now(),
-        ...redeem,
-      }),
-    ),
-  };
+  // const mockGiftRepository = {
+  //   findOne: jest.fn().mockImplementation((gift) =>
+  //     Promise.resolve({
+  //       id: Date.now(),
+  //       ...gift,
+  //     }),
+  //   ),
+  //   create: jest.fn().mockImplementation((dto) => dto),
+  //   save: jest.fn().mockImplementation((gift) =>
+  //     Promise.resolve({
+  //       id: Date.now(),
+  //       ...gift,
+  //     }),
+  //   ),
+  // };
+  // const mockUserRepository = {
+  //   findOne: jest.fn().mockImplementation((user) =>
+  //     Promise.resolve({
+  //       id: Date.now(),
+  //       ...user,
+  //     }),
+  //   ),
+  // };
+  // const mockRatingRepository = {
+  //   create: jest.fn().mockImplementation((dto) => dto),
+  //   save: jest.fn().mockImplementation((rating) =>
+  //     Promise.resolve({
+  //       id: Date.now(),
+  //       ...rating,
+  //     }),
+  //   ),
+  // };
+  // const mockRedeemRepository = {
+  //   create: jest.fn().mockImplementation((dto) => dto),
+  //   save: jest.fn().mockImplementation((redeem) =>
+  //     Promise.resolve({
+  //       id: Date.now(),
+  //       ...redeem,
+  //     }),
+  //   ),
+  // };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GiftService,
-        {
-          provide: getRepositoryToken(Gift),
-          useValue: mockGiftRepository,
-        },
-        {
-          provide: getRepositoryToken(User),
-          useValue: mockUserRepository,
-        },
-        {
-          provide: getRepositoryToken(Rating),
-          useValue: mockRatingRepository,
-        },
-        {
-          provide: getRepositoryToken(Redeem),
-          useValue: mockRedeemRepository,
-        },
+        User,
+        Gift,
+        Redeem,
+        Rating,
+        // {
+        //   provide: getRepositoryToken(Gift),
+        //   useValue: mockGiftRepository,
+        // },
+        // {
+        //   provide: getRepositoryToken(User),
+        //   useValue: mockUserRepository,
+        // },
+        // {
+        //   provide: getRepositoryToken(Rating),
+        //   useValue: mockRatingRepository,
+        // },
+        // {
+        //   provide: getRepositoryToken(Redeem),
+        //   useValue: mockRedeemRepository,
+        // },
       ],
       imports: [
         TypeOrmModule.forRoot(databaseConfig),
