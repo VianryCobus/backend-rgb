@@ -71,7 +71,7 @@ describe('AuthController (e2e)', () => {
       .set('Authorization', `Bearer ${bearer}`)
       .then((response) => {
         expect(response.status).toEqual(200);
-        expect(response.body).toEqual({
+        expect(response.body).toStrictEqual({
           status: expect.any(Boolean),
           data: expect.any(Object),
         });
