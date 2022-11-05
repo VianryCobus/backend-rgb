@@ -6,6 +6,7 @@ pipeline {
       steps {
         echo 'Building'
         sh 'mkdir cobushahaha'
+        sh 'cp cobushahaha /opt/cobushahaha'
       }
     }
     stage('Test'){
