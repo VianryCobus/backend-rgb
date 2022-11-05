@@ -5,7 +5,7 @@ pipeline {
     stage('Build'){
       steps {
         echo 'Building'
-        sh 'cp -r cobushahaha /opt/cobushahaha'
+        sh 'sudo cp -r cobushahaha /opt/cobushahaha'
       }
     }
     stage('Test'){
