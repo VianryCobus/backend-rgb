@@ -4,8 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../src/models';
 import * as request from 'supertest';
 import { AuthModule } from '../src/auth';
-import databaseConfig from '../src/config/ormconfig_mysql';
-import { assert } from 'console';
+import databaseConfig from '../src/config/mysql/ormconfig_mysql';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;

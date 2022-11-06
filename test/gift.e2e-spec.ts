@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Gift, User } from '../src/models';
 import * as request from 'supertest';
 import { AuthModule } from '../src/auth';
-import databaseConfig from '../src/config/ormconfig_mysql';
+import databaseConfig from '../src/config/mysql/ormconfig_mysql';
 import { assert } from 'console';
 import { GiftModule } from '../src/gift';
 

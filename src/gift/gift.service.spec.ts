@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import databaseConfig from '../config/ormconfig_mysql';
+import databaseConfig from '../config/mysql/ormconfig_mysql';
 import { Gift, Rating, Redeem, User } from '../models';
 import { GiftService } from './gift.service';
-import { PatchGiftDto } from './dto/patchGift.dto';
 
 describe('GiftService', () => {
   let service: GiftService;

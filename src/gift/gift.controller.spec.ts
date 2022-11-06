@@ -1,8 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { request } from 'express';
-import databaseConfig from '../config/ormconfig_mysql';
-import { typeOrmAsyncConfig } from '../config/typeorm-config';
+import databaseConfig from '../config/mysql/ormconfig_mysql';
 import { Gift, Rating, Redeem, User } from '../models';
 import { GiftController } from './gift.controller';
 import { GiftService } from './gift.service';
